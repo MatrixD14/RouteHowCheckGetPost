@@ -3,6 +3,7 @@
         "app\\": "app"
     },
     {
-        "root": "../codeEdition"
+        "file": {},
+        "root": ""
     }
 ]

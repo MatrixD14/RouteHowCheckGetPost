@@ -1,5 +1,7 @@
 <?php
 
+namespace app\helpers;
+
 class Env
 {
     private static array $data = [];
@@ -9,11 +11,11 @@ class Env
     {
         if (self::$loaded) return;
         if (!is_file($file))
-            throw new Exception("file config no exist: {$file}");
+            throw new \Exception("file config no exist: {$file}");
         $parsed = parse_ini_file($file, true, INI_SCANNER_TYPED);
 
         if ($parsed === false)
-            throw new Exception("Erro the process file config.");
+            throw new \Exception("Erro the process file config.");
         self::$data = self::resolveInheritance($parsed);
         self::$loaded = true;
     }
