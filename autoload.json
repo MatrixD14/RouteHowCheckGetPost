@@ -1,9 +1,9 @@
 [
     {
-        "app\\": "app"
+        "app\\": "app/"
     },
     {
-        "file": {},
-        "root": ""
+        "file": ["app/core/Constants.php"],
+        "root": "../rota proficional"
     }
 ]

@@ -67,7 +67,8 @@ class LightAutoloader
                     if (strpos($fullClass, $prefix) === 0) {
                         // Caminho relativo à raiz do projeto
                         $relativePath = substr($file->getRealPath(), strlen($projectRoot) + 1);
-                        $classmap[$fullClass] = $relativePath;
+                        // $classmap[$fullClass] = $relativePath;
+                        $classmap[$fullClass] = str_replace('\\', '/', $relativePath);
                         // $classmap[$fullClass] = '__DIR__ ."/'  . ltrim($relativePath, '/')  . '"';
                     }
                 }
@@ -89,6 +90,15 @@ class LightAutoloader
         }
         $classmap = require self::$classmapFile;
         $projectRoot = self::getProjectRoot();
+
+        $config = json_decode(file_get_contents(self::$configFile), true);
+        $files = $config[1]['file'] ?? []; // array indexado
+        foreach ($files as $filePath) {
+            $fullPath = $projectRoot . '/' . ltrim($filePath, '/');
+            if (file_exists($fullPath)) {
+                require_once $fullPath; // evita múltiplas inclusões
+            }
+        }
 
         spl_autoload_register(function ($class) use ($classmap, $projectRoot) {
             if (isset($classmap[$class])) {
@@ -114,11 +124,26 @@ class LightAutoloader
                     return;
                 }
             }
+            // foreach ($psr4 as $prefix => $dir) {
+            //     $len = strlen($prefix);
+            //     if (strncmp($prefix, $class, $len) === 0) {
+            //         $relative = substr($class, $len);
+            //         $fullPath = $projectRoot . '/' . $dir . '/' . str_replace('\\', '/', $relative) . '.php';
+            //         if (file_exists($fullPath)) {
+            //             require $fullPath;
+            //             return;
+            //         }
+            //     }
+            // }
             foreach ($psr4 as $prefix => $dir) {
-                $len = strlen($prefix);
-                if (strncmp($prefix, $class, $len) === 0) {
+                $normalizedPrefix = rtrim($prefix, '\\') . '\\';
+                $len = strlen($normalizedPrefix);
+
+                if (strncmp($normalizedPrefix, $class, $len) === 0) {
                     $relative = substr($class, $len);
-                    $fullPath = $projectRoot . '/' . $dir . '/' . str_replace('\\', '/', $relative) . '.php';
+                    // Garante que o caminho use barras normais do sistema
+                    $fullPath = $projectRoot . '/' . rtrim($dir, '/') . '/' . str_replace('\\', '/', $relative) . '.php';
+
                     if (file_exists($fullPath)) {
                         require $fullPath;
                         return;

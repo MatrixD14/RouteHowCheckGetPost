@@ -4,7 +4,7 @@ namespace app\controllers;
 
 use app\helpers\View;
 
-abstract class Controller
+abstract class Controllers
 {
 
     protected function view(string $view, array $data = [])

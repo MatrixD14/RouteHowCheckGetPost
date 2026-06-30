@@ -1,11 +1,7 @@
 <?php
 
 return [
-    'get' => [
-        '/' => ['HomeController', 'index'],
-        '/contact' => ['ContactController', 'index'],
-        '/dados' => ['ContactController', 'store']
-    ],
-
-    'post' => [],
+    '/' => 'HomeController@index',
+    '/contact/[0-9]+' => 'ContactController@index',
+    '/user/[0-9]+/name/[a-z]+' => 'User@name'
 ];
